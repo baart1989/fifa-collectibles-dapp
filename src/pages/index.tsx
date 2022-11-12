@@ -1,21 +1,21 @@
-import { useRouter } from 'next/router';
 import { debounce } from 'lodash';
+import { useRouter } from 'next/router';
+import type { ChangeEvent, FormEvent } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
-import { useCallback, ChangeEvent, FormEvent, useState } from 'react';
 
 const Index = () => {
   const { push } = useRouter();
 
   const [searchText, setSearchText] = useState('');
 
-  
   const debouncedSearch = useCallback(
     debounce((searchText: string) => {
       setSearchText(searchText);
     }, 250),
-    [], // will be created only once initially
+    [] // will be created only once initially
   );
 
   const onSearchTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -23,10 +23,11 @@ const Index = () => {
     debouncedSearch(target.value);
   };
 
-  const onSubmit = (event?: FormEvent<HTMLFormElement>) => {
-    event?.stopPropagation();
-    push(`/my-wallet/${searchText}`);
-  }
+  const onSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    push(`/wallet/${searchText}`);
+  };
 
   return (
     <Main
@@ -38,11 +39,16 @@ const Index = () => {
       }
     >
       <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">Wallet search</h3>
+        <h3 className="text-lg font-medium leading-6 text-gray-900">
+          Wallet search
+        </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-700">
           <p>Enter the algorand address associated with your fifa account.</p>
         </div>
-        <form onSubmit={(event) => onSubmit(event)} className="mt-5 sm:flex sm:items-center">
+        <form
+          onSubmit={(event) => onSubmit(event)}
+          className="mt-5 sm:flex sm:items-center"
+        >
           <div className="w-full sm:max-w-xs">
             <label htmlFor="email" className="sr-only">
               Email
@@ -56,7 +62,7 @@ const Index = () => {
             />
           </div>
           <button
-            onClick={() => onSubmit()}
+            onClick={(e) => onSubmit(e as any)}
             type="submit"
             className="mt-3 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
           >
